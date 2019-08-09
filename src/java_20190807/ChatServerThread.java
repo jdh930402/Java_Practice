@@ -11,6 +11,8 @@ import java.util.ArrayList;
 public class ChatServerThread implements Runnable {
 	Socket socket;
 	ArrayList<ChatServerThread> threadList;
+	BufferedReader br;
+	BufferedWriter bw;
 
 	public ChatServerThread(Socket socket, ArrayList<ChatServerThread> threadList) {
 		this.socket = socket;
@@ -20,8 +22,8 @@ public class ChatServerThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
 			boolean isStop = false;
 
@@ -30,17 +32,42 @@ public class ChatServerThread implements Runnable {
 				System.out.println(readLine);
 				if ((readLine.substring((readLine.indexOf(":")) + 1).equals("exit"))) {
 					isStop = true;
+					threadList.remove(this);
 				} else {
-					bw.write(readLine);
-					bw.newLine();
-					bw.flush();
+					message(readLine);
 				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			threadList.remove(this);
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+				if (bw != null)
+					bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void message(String msg) {
+		for (ChatServerThread cst : threadList) {
+			cst.sendMessage(msg);
+		}
+	}
+
+	private void sendMessage(String msg) {
+		try {
+			bw.write(msg);
+			bw.newLine();
+			bw.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 }

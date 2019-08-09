@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ChatClient {
+public class ChatClient2 {
 	private String id;
 	private String ip;
 	private int port;
@@ -17,7 +17,7 @@ public class ChatClient {
 	private BufferedReader br = null;
 	private BufferedReader input = null;
 
-	public ChatClient(String id, String ip, int port) {
+	public ChatClient2(String id, String ip, int port) {
 		this.id = id;
 		this.ip = ip;
 		this.port = port;
@@ -69,7 +69,7 @@ public class ChatClient {
 	}
 
 	public static void main(String[] args) {
-		new ChatClient("호랑나비", "192.168.0.24", 3000).run();
+		new ChatClient2("바가지", "192.168.0.24", 3000).run();
 	}
 
 }
